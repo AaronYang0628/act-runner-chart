@@ -10,6 +10,11 @@ jobs:
   helm-release:
     permissions:
       contents: write
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - chart_path: "charts/act-runner"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,9 +28,15 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1
+        uses: bitdeps/helm-oci-charts-releaser@v0.1.4
         with:
-          skip_existing: true
-          packages_with_index: true
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          oci_registry: ghcr.io/${{ github.repository }}
+          oci_username: ${{ github.actor }}
+          oci_password: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          charts_dir: "${{ matrix.chart_path }}"
+          tag_name_pattern: ${{ github.ref_type == 'tag' && '{{chartName}}' || '{{chartName}}-latest' }}
+          skip_dependencies: false
+          skip_gh_release: ${{ github.ref_type != 'tag' }}
+          mark_as_latest: ${{ github.ref_type != 'tag' }}
+          version: v3.17.4
