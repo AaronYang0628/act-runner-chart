@@ -64,17 +64,6 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-{{/*
-Helper template to determine the Docker image tag based on the mode.
-Usage: {{ include "act_runner.imageTag" . }}
-*/}}
-{{- define "act_runner.imageTag" -}}
-{{- if .Values.runner.dockerDind.enabled -}}
-{{ .Values.image.tag | default .Chart.AppVersion }}
-{{- else -}}
-{{ .Values.image.tag | default .Chart.AppVersion }}-dind-rootless
-{{- end -}}
-{{- end -}}
 
 {{/*
 Helper template to determine the secret reference for act_runner token.
@@ -107,19 +96,6 @@ Usage: {{ include "act_runner.configMap" . }}
 {{ include "act_runner.fullname" . }}-config
 {{- end -}}
 
-{{/*
-Helper template to build the securityContext, adding privileged: true if dockerDind is enabled.
-Usage: securityContext: {{ include "act_runner.securityContext" . | nindent 2 }}
-*/}}
-{{- define "act_runner.securityContext" -}}
-{{- $base := .Values.securityContext | default dict -}}
-{{- if not .Values.runner.dockerDind.enabled -}}
-{{- $merged := merge (dict "privileged" true) $base -}}
-{{- toYaml $merged -}}
-{{- else -}}
-{{- toYaml $base -}}
-{{- end -}}
-{{- end -}}
 
 {{/*
 Merges default PVC annotations with .Values.serviceAccount.annotations.

@@ -32,14 +32,11 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- with (include "act_runner.securityContext" . | fromYaml) }}
-          securityContext: {{ toYaml . | nindent 12 }}
+          {{- if .Values.securityContext }}
+          securityContext: {{ toYaml .Values.securityContext | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ include "act_runner.imageTag" . }}"
+          image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag  }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.runner.dockerDind.enabled }}
-          command: ["sh", "-c", "while ! nc -z localhost 2376 </dev/null; do echo 'waiting for docker daemon...'; sleep 5; done; /sbin/tini -- run.sh"]
-          {{- end }}
           env:
             - name: GITEA_INSTANCE_URL
               value: {{ .Values.runner.instanceURL }}
@@ -73,30 +70,15 @@ spec:
           volumeMounts:
             - name: data
               mountPath: {{ .Values.persistence.mountPath | default "/data" }}
+            - name: docker-binary
+              mountPath: /var/lib/docker
             {{- if .Values.runner.config.enabled }}
             - name: config
               mountPath: /config
             {{- end }}
-            {{- if .Values.runner.dockerDind.enabled }}
-            - name: docker-certs
-              mountPath: /certs
-            {{- end }}
             {{- with .Values.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-        {{- if .Values.runner.dockerDind.enabled }}
-        - name: docker-dind
-          image: {{ .Values.runner.dockerDind.image }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          securityContext:
-            privileged: true
-          volumeMounts:
-          env:
-            - name: DOCKER_TLS_CERTDIR
-              value: /certs
-            - name: docker-certs
-              mountPath: /certs
-        {{- end }}
         {{- with .Values.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -114,14 +96,12 @@ spec:
       topologySpreadConstraints: {{ toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        - name: docker-binary
+          emptyDir: {}
         {{- if .Values.runner.config.enabled }}
         - name: config
           configMap:
             name: {{ include "act_runner.configMap" . }}
-        {{- end }}
-        {{- if .Values.runner.dockerDind.enabled }}
-        - name: docker-certs
-          emptyDir: {}
         {{- end }}
         {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}

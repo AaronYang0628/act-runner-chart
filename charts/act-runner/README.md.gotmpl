@@ -9,8 +9,8 @@
 To install the chart with the release name `{{ template "chart.name" . }}`
 
 ```console
-$ helm repo add gringolito https://gringolito.github.io/helm-charts
-$ helm install {{ template "chart.name" . }} gringolito/{{ template "chart.name" . }}
+$ helm repo add ay-mirrors https://aaronyang0628.github.io/charts
+$ helm install {{ template "chart.name" . }} add ay-mirrors/{{ template "chart.name" . }}
 ```
 
 {{ template "chart.sourcesSection" . }}

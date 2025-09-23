@@ -10,9 +10,9 @@ global:
 
 image:
   # -- Specify the image name to use (relative to `image.repository`).
-  name: gitea/act_runner
+  name: vegardit/gitea-act-runner
   # -- Overrides the image tag whose default is the chart appVersion.
-  tag: "0.2.11"
+  tag: "dind-0.2.13"
   # -- Specify the image repository to use.
   repository: docker.io
   # -- Specify the image pull policy. Valid values are `Always`, `Never`, `IfNotPresent`.
@@ -29,31 +29,23 @@ runner:
     # [strategy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies)
     type: RollingUpdate  # @schema enum:[RollingUpdate, OnDelete]
 
-  # Docker in Docker configuration for running Docker commands inside the runner.
-  dockerDind:
-    # -- Enable Docker in Docker with root user.
-    enabled: false
-    # -- Docker DinD image repository and tag.
-    image: docker:23.0.6-dind
-
   # -- Gitea instance URL where the runner will register.
-  instanceURL: https://gitea.example.com
+  instanceURL: http://192.168.100.125:30300
 
   # Runner registration token configuration.
   token:
     # -- Set the Runner registration token value. If existing secret is specified this value is not used.
-    value: ""
     # Specify an existing secret containing the Runner registration token.
     fromSecret:
       # -- Specify the secret name containing the Runner registration token.
-      name: ""
+      name: "act-runner-secret"
       # -- Specify the key in the secret that contains the Runner registration token.
-      key: ""
+      key: "act-runner-token"
 
   # Runner custom configuration settings.
   config:
     # -- Enable custom configuration for the runner deployment.
-    enabled: false
+    enabled: true
     # -- Specify runner's custom configuration in YAML format.
     # @default -- See [values.yaml](./values.yaml) for default configuration
     data: |
@@ -61,21 +53,13 @@ runner:
         level: info
       runner:
         labels:
-          - ubuntu-latest:docker://docker.gitea.com/runner-images:ubuntu-latest
-          - ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04
-          - ubuntu-20.04:docker://docker.gitea.com/runner-images:ubuntu-20.04
+          - ubuntu-latest:docker://m.lab.zverse.space/docker.gitea.com/runner-images:ubuntu-latest
       container:
         force_pull: true
 
 # -- Define environment variables for the runner container.
 # @default -- See [values.yaml](./values.yaml) for default configuration
-env:
-  - name: DOCKER_HOST
-    value: tcp://localhost:2376
-  - name: DOCKER_CERT_PATH
-    value: /certs/client
-  - name: DOCKER_TLS_VERIFY
-    value: "1"
+env: []
   # - name: GITEA_RUNNER_LABELS
   #   value: ""
 
@@ -143,18 +127,18 @@ podSecurityContext:
 
 # -- Security context configuration for the runner container.
 # [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/).
-securityContext: {}
-  # privileged: true
+securityContext: 
+  privileged: true
 
 # -- Resource requests and limits for the runner container.
 # [Resources](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/).
-resources: {}
-  # requests:
-  #   cpu: 200m
-  #   memory: 256Mi
-  # limits:
-  #   cpu: 200m
-  #   memory: 256Mi
+resources: 
+  requests:
+    cpu: 1000m
+    memory: 1024Mi
+  limits:
+    cpu: 2000m
+    memory: 2048Mi
 
 # -- Lifecycle hooks for the runner container.
 # [Lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/).

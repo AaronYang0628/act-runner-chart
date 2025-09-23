@@ -17,11 +17,6 @@ $ helm install act-runner gringolito/act-runner
 
 * <https://github.com/gringolito/act-runner-helm/charts/act-runner>
 
-## Maintainers
-
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Filipe Utzig | <filipe@gringolito.com> | <https://github.com/gringolito> |
 
 ## Values
 
@@ -65,8 +60,6 @@ $ helm install act-runner gringolito/act-runner
 | resources | object | `{}` | Resource requests and limits for the runner container. [Resources](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/). |
 | runner.config.data | string | See [values.yaml](./values.yaml) for default configuration | Specify runner's custom configuration in YAML format. |
 | runner.config.enabled | bool | `false` | Enable custom configuration for the runner deployment. |
-| runner.dockerDind.enabled | bool | `false` | Enable Docker in Docker with root user. |
-| runner.dockerDind.image | string | `"docker:23.0.6-dind"` | Docker DinD image repository and tag. |
 | runner.instanceURL | string | `"https://gitea.example.com"` | Gitea instance URL where the runner will register. |
 | runner.token.fromSecret.key | string | `""` | Specify the key in the secret that contains the Runner registration token. |
 | runner.token.fromSecret.name | string | `""` | Specify the secret name containing the Runner registration token. |
