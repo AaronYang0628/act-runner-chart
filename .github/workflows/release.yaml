@@ -4,7 +4,7 @@ name: Release Helm Chart
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   helm-release:
