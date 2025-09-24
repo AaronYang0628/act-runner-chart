@@ -1,0 +1,48 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "act_runner.fullname" . }}-cleanup
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "act_runner.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-weight": "-5"
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "act_runner.serviceAccountName" . }}
+      {{- else }}
+      serviceAccountName: {{ default "default" .Values.serviceAccount.name }}
+      {{- end }}
+      containers:
+        - name: pvc-cleanup
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              # 等待几秒钟确保状态稳定
+              sleep 2
+              
+              # 输出当前命名空间和service account信息用于调试
+              echo "当前命名空间: {{ .Release.Namespace }}"
+              echo "使用的service account: {{ if .Values.serviceAccount.create }}{{ include "act_runner.serviceAccountName" . }}{{ else }}{{ default "default" .Values.serviceAccount.name }}{{ end }}"
+              
+              kubectl delete sts -l app.kubernetes.io/name={{ include "act_runner.name" . }},app.kubernetes.io/instance={{ .Release.Name }} --ignore-not-found=true -n {{ .Release.Namespace }}
+
+              # 删除由StatefulSet创建的data卷PVC
+              echo "正在清理StatefulSet创建的PVC..."
+              kubectl delete pvc -l app.kubernetes.io/name={{ include "act_runner.name" . }},app.kubernetes.io/instance={{ .Release.Name }} --ignore-not-found=true -n {{ .Release.Namespace }}
+              
+              # 检查删除结果
+              if [ $? -eq 0 ]; then
+                echo "PVC清理完成"
+                exit 0
+              else
+                echo "PVC清理失败，但忽略错误继续"
+                exit 0
+              fi
