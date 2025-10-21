@@ -4,7 +4,7 @@
 
 Act Runners for Gitea Actions.
 
-![Version: 0.2.2](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.11](https://img.shields.io/badge/AppVersion-0.2.11-informational?style=flat-square)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/gitea-act-runner)](https://artifacthub.io/packages/search?repo=gitea-act-runner) ![Version: 0.2.3](https://img.shields.io/badge/Version-0.2.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.2.11](https://img.shields.io/badge/AppVersion-0.2.11-informational?style=flat-square)
 
 ## Installing the Chart
 
@@ -74,17 +74,3 @@ $ helm install act-runner ay-mirrors /act-runner
 | terminationGracePeriodSeconds | int | `10` | Termination grace period in seconds for the runner pods. |
 | tolerations | list | `[]` | Tolerations for scheduling runner pods on nodes with taints. [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/). |
 | topologySpreadConstraints | list | `[]` | Topology spread constraints for distributing runner pods across zones/nodes. [TopologySpreadConstraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/). |
-
-
-### Developer CheatSheet
-```shell
-helm lint ./charts/act-runner
-```
-
-```shell
-helm package --destination /tmp/ ./charts/act-runner
-```
-
-```shell
-helm upgrade  --create-namespace -n application --install -f ./charts/act-runner/values.yaml act-runner /tmp/act-runner-0.2.2.tgz
-```
