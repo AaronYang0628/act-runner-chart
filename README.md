@@ -1,6 +1,5 @@
 # Helm chart for Gitea Act Runner
 
-[![Release Helm Chart](https://github.com/AaronYang0628/act-runner-chart/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/AaronYang0628/act-runner-chart/actions/workflows/release.yaml)
 
 
 Act Runners for Gitea Actions.

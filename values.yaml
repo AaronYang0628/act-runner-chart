@@ -30,7 +30,7 @@ runner:
     type: RollingUpdate  # @schema enum:[RollingUpdate, OnDelete]
 
   # -- Gitea instance URL where the runner will register.
-  instanceURL: http://192.168.100.125:30300
+  instanceURL: http://your-gitea-instance.com/
 
   # Runner registration token configuration.
   token:
@@ -53,7 +53,7 @@ runner:
         level: info
       runner:
         labels:
-          - ubuntu-latest:docker://m.lab.zverse.space/docker.gitea.com/runner-images:ubuntu-latest
+          - ubuntu-latest:docker:/docker.gitea.com/runner-images:ubuntu-latest
       container:
         force_pull: true
 
