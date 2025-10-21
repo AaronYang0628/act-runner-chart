@@ -36,5 +36,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           charts_dir: "${{ matrix.chart_path }}"
           skip_dependencies: false
-          force: true
-          version_field: v3.17.4
+          mark_as_latest: ${{ github.ref_type != 'tag' }}
+          skip_gh_release: ${{ github.ref_type != 'tag' }}
