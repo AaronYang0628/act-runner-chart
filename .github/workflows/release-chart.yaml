@@ -35,8 +35,8 @@ jobs:
           oci_password: ${{ secrets.GITHUB_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           charts_dir: "${{ matrix.chart_path }}"
-          tag_name_pattern: ${{ github.ref_type == 'tag' && '{{chartName}}' || '{{chartName}}-latest' }}
           skip_dependencies: false
           skip_gh_release: ${{ github.ref_type != 'tag' }}
           mark_as_latest: ${{ github.ref_type != 'tag' }}
-          version: v3.17.4
+          force: true
+          version_field: version

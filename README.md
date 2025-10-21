@@ -74,3 +74,17 @@ $ helm install act-runner ay-mirrors /act-runner
 | terminationGracePeriodSeconds | int | `10` | Termination grace period in seconds for the runner pods. |
 | tolerations | list | `[]` | Tolerations for scheduling runner pods on nodes with taints. [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/). |
 | topologySpreadConstraints | list | `[]` | Topology spread constraints for distributing runner pods across zones/nodes. [TopologySpreadConstraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/). |
+
+
+### Developer CheatSheet
+```shell
+helm lint ./charts/act-runner
+```
+
+```shell
+helm package --destination /tmp/ ./charts/act-runner
+```
+
+```shell
+helm upgrade  --create-namespace -n application --install -f ./charts/act-runner/values.yaml act-runner /tmp/act-runner-0.2.2.tgz
+```

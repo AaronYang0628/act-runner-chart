@@ -90,7 +90,7 @@ serviceAccount:
 # Horizontal Pod Autoscaler configuration.
 autoscaling:
   # -- Enable horizontal pod autoscaling.
-  enabled: false
+  enabled: true
   # -- Minimum number of replicas.
   minReplicas: 1  # @schema minimum:1
   # -- Maximum number of replicas.
